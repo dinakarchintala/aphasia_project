@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:aphasia_bot/pages/homedesign.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:aphasia_bot/services/translation_service.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -37,42 +38,87 @@ class _WelcomePageState extends State<WelcomePage>
 
   @override
   Widget build(BuildContext context) {
+    var translationService = Provider.of<TranslationService>(context);
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(
           189, 252, 201, 1.0), // Therapy-related background color
+      appBar: AppBar(
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.translate),
+            onSelected: (String languageCode) {
+              setState(() {
+                translationService.changeLanguage(languageCode);
+              });
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'en', child: Text('English')),
+              PopupMenuItem(value: 'ta', child: Text('Tamil')),
+              PopupMenuItem(value: 'hi', child: Text('Hindi')),
+               PopupMenuItem(value: 'te', child: Text('Telugu')),
+               PopupMenuItem(value: 'ml', child: Text('Malayalam')),
+            ],
+          ),
+        ],
+      ),
       body: Center(
         child: FadeTransition(
           opacity: _animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text(
-                'Welcome',
-                style: TextStyle(
-                    fontSize: 62,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50)),
+            children: [
+              FutureBuilder<String>(
+                future: translationService.translate('Welcome'),
+                builder: (context, snapshot) {
+                  return Text(
+                    snapshot.data ?? 'Welcome',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  );
+                },
               ),
-              Text(
-                'to',
-                style: TextStyle(
-                    fontSize: 62,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50)),
+              FutureBuilder<String>(
+                future: translationService.translate('to'),
+                builder: (context, snapshot) {
+                  return Text(
+                    snapshot.data ?? 'to',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  );
+                },
               ),
-              Text(
-                'Aphasia',
-                style: TextStyle(
-                    fontSize: 62,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50)),
+              FutureBuilder<String>(
+                future: translationService.translate('Aphasia'),
+                builder: (context, snapshot) {
+                  return Text(
+                    snapshot.data ?? 'Aphasia',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  );
+                },
               ),
-              Text(
-                'Therapy',
-                style: TextStyle(
-                    fontSize: 62,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50)),
+              FutureBuilder<String>(
+                future: translationService.translate('Therapy'),
+                builder: (context, snapshot) {
+                  return Text(
+                    snapshot.data ?? 'Therapy',
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  );
+                },
               ),
             ],
           ),

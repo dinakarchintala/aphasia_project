@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
-//this is new design 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:aphasia_bot/services/translation_service.dart'; // Import your TranslationService class
 import 'package:aphasia_bot/pages/helppage.dart';
 import 'package:aphasia_bot/pages/home.dart';
 import 'package:aphasia_bot/pages/homedesign.dart';
@@ -22,10 +24,16 @@ import 'package:aphasia_bot/utilpages/speaking3.dart';
 import 'package:aphasia_bot/utilpages/writing1.dart';
 import 'package:aphasia_bot/utilpages/writing2.dart';
 import 'package:aphasia_bot/utilpages/writing3.dart';
-import 'package:flutter/material.dart';
-
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TranslationService()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,11 +47,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/Welcome': (context) => WelcomePage(),
         '/Home': (context) => TherapyHomePage(),
-        '/Helppage':(context)=>Helppage(),
-        '/Memoriesvideo':(context)=>Memoriesvideo(),
-        '/Homedesign':(context)=>Homedesign(),
+        '/Helppage': (context) => Helppage(),
+        '/Memoriesvideo': (context) => Memoriesvideo(),
+        '/Homedesign': (context) => Homedesign(),
         '/Listening': (context) => Listening(),
-        '/Familyquiz':(context)=>Familyquiz(),
+        '/Familyquiz': (context) => Familyquiz(),
         '/Writing': (context) => Writing(),
         '/Speaking': (context) => Speaking(),
         '/Reading': (context) => Reading(),
@@ -58,7 +66,7 @@ class MyApp extends StatelessWidget {
         '/Spekaingalphabet': (context) => Speakingalphabet(),
         '/Readingpicture': (context) => ReadAndChoosePage(),
         '/Readingmatch': (context) => ReadAndMatch(),
-        '/completion': (context) => CompletionPage()
+        '/completion': (context) => CompletionPage(),
       },
     );
   }
