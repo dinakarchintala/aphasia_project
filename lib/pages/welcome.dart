@@ -3,6 +3,7 @@ import 'package:aphasia_bot/pages/homedesign.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aphasia_bot/services/translation_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -41,8 +42,7 @@ class _WelcomePageState extends State<WelcomePage>
     var translationService = Provider.of<TranslationService>(context);
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(
-          189, 252, 201, 1.0), // Therapy-related background color
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         actions: [
           PopupMenuButton<String>(
@@ -56,86 +56,110 @@ class _WelcomePageState extends State<WelcomePage>
               PopupMenuItem(value: 'en', child: Text('English')),
               PopupMenuItem(value: 'ta', child: Text('Tamil')),
               PopupMenuItem(value: 'hi', child: Text('Hindi')),
-               PopupMenuItem(value: 'te', child: Text('Telugu')),
-               PopupMenuItem(value: 'ml', child: Text('Malayalam')),
+              PopupMenuItem(value: 'te', child: Text('Telugu')),
+              PopupMenuItem(value: 'ml', child: Text('Malayalam')),
             ],
           ),
         ],
       ),
-      body: Center(
-        child: FadeTransition(
-          opacity: _animation,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FutureBuilder<String>(
-                future: translationService.translate('Welcome'),
-                builder: (context, snapshot) {
-                  return Text(
-                    snapshot.data ?? 'Welcome',
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
-                    ),
-                  );
-                },
+      body: Stack(children: [
+        // Background Image
+        Positioned(
+          top:
+              MediaQuery.of(context).size.height / 2 - 150, // Center vertically
+          right: 20, // 20px from the right edge
+          child: Container(
+            height: 300, // Circular height
+            width: 300, // Circular width
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Makes the image circular
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 5,
+                  color: Colors.black26,
+                ),
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/homepage/medi2.jpeg',
+                fit: BoxFit
+                    .cover, // Ensures the image covers the entire circular area
               ),
-              FutureBuilder<String>(
-                future: translationService.translate('to'),
-                builder: (context, snapshot) {
-                  return Text(
-                    snapshot.data ?? 'to',
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
-                    ),
-                  );
-                },
-              ),
-              FutureBuilder<String>(
-                future: translationService.translate('Aphasia'),
-                builder: (context, snapshot) {
-                  return Text(
-                    snapshot.data ?? 'Aphasia',
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
-                    ),
-                  );
-                },
-              ),
-              FutureBuilder<String>(
-                future: translationService.translate('Therapy'),
-                builder: (context, snapshot) {
-                  return Text(
-                    snapshot.data ?? 'Therapy',
-                    style: TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Homedesign()),
-          );
-        },
-        backgroundColor: Color(0xFF4CAF50), // Therapy-related button color
-        child: Icon(Icons.arrow_forward),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.endFloat, // Position
+        Positioned(
+          top: 80,
+          left: 220,
+          child: FadeTransition(
+            opacity: _animation,
+            child: FutureBuilder<String>(
+              future: translationService.translate('Aphasia Therapy'),
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data ?? 'Aphasia Therapy',
+                  style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 45,
+                      color: Color(0xFF263238),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        Positioned(
+          top: 280,
+          left: 220,
+          child: FadeTransition(
+            opacity: _animation,
+            child: FutureBuilder<String>(
+              future: translationService
+                  .translate("Welcome back! Let's keep the momentum going."),
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data ??
+                      "Welcome back! Let's keep the momentum going.",
+                  style: GoogleFonts.roboto(
+                    textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(255, 61, 79, 88),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        Positioned(
+          top: 350, // Position below "Welcome back!" text
+          left: MediaQuery.of(context).size.width / 2 -
+              190, // Center horizontally
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Homedesign()),
+              );
+            },
+            backgroundColor: Color(0xFFFFEB3B), // Therapy-related button color
+            label: Text(
+              "Start Your Session",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF263238), // Text color
+              ),
+            ),
+          ),
+        ),
+      ]),
+      // Position
     );
   }
 }

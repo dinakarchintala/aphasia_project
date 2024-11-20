@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:aphasia_bot/services/translation_service.dart'; // Import your TranslationService class
 import 'package:aphasia_bot/pages/helppage.dart';
 import 'package:aphasia_bot/pages/home.dart';
+import 'package:aphasia_bot/pages/funspace.dart';
+import 'package:aphasia_bot/pages/callschedule.dart';
 import 'package:aphasia_bot/pages/homedesign.dart';
 import 'package:aphasia_bot/pages/listening.dart';
 import 'package:aphasia_bot/pages/reading.dart';
@@ -11,11 +14,13 @@ import 'package:aphasia_bot/pages/speaking.dart';
 import 'package:aphasia_bot/pages/welcome.dart';
 import 'package:aphasia_bot/pages/writing.dart';
 import 'package:aphasia_bot/utilpages/Familyquiz.dart';
+import 'package:aphasia_bot/utilpages/ReligiousBooksPage.dart';
 import 'package:aphasia_bot/utilpages/completion.dart';
 import 'package:aphasia_bot/utilpages/listening1.dart';
 import 'package:aphasia_bot/utilpages/listening2.dart';
 import 'package:aphasia_bot/utilpages/listening3.dart';
 import 'package:aphasia_bot/utilpages/memoriesvideo.dart';
+import 'package:aphasia_bot/utilpages/meditation.dart';
 import 'package:aphasia_bot/utilpages/reading1.dart';
 import 'package:aphasia_bot/utilpages/reading2.dart';
 import 'package:aphasia_bot/utilpages/speaking1.dart';
@@ -25,7 +30,13 @@ import 'package:aphasia_bot/utilpages/writing1.dart';
 import 'package:aphasia_bot/utilpages/writing2.dart';
 import 'package:aphasia_bot/utilpages/writing3.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.landscapeLeft,
+  //   DeviceOrientation.landscapeRight,
+  // ]).then((_) {
   runApp(
     MultiProvider(
       providers: [
@@ -34,6 +45,7 @@ void main() {
       child: MyApp(),
     ),
   );
+  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -49,6 +61,10 @@ class MyApp extends StatelessWidget {
         '/Home': (context) => TherapyHomePage(),
         '/Helppage': (context) => Helppage(),
         '/Memoriesvideo': (context) => Memoriesvideo(),
+        '/Meditation': (context) => Meditation(),
+        '/Callschedule': (context) => Callschedule(),
+        '/Religiousbookspage': (context) => ReligiousBooksPage(),
+        '/Funspace': (context) => Funspace(),
         '/Homedesign': (context) => Homedesign(),
         '/Listening': (context) => Listening(),
         '/Familyquiz': (context) => Familyquiz(),

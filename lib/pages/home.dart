@@ -24,11 +24,12 @@ class TherapyHomePage extends StatelessWidget {
     '/Reading',
   ];
 
-   TherapyHomePage({super.key});
+  TherapyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         actions: [
           IconButton(
@@ -42,7 +43,7 @@ class TherapyHomePage extends StatelessWidget {
           'Home',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        backgroundColor: Color(0xFFBDFCC9), // Seafoam Green
+        backgroundColor: Colors.white, // Seafoam Green
       ),
       drawer: Drawer(
         child: ListView(
@@ -99,36 +100,46 @@ class TherapyHomePage extends StatelessWidget {
         ),
       ),
       body: PageView.builder(
-        itemCount: imagePaths.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, pageroutes[index]);
-            },
-            child: Container(
-              color: Color(0xFFF2F2F2), // Light Gray background
-              child: Center(
+        scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+        itemCount: (imagePaths.length / 2).ceil(),
+        itemBuilder: (context, pageIndex) {
+          final startIndex = pageIndex * 2;
+          final itemsOnPage = imagePaths.sublist(
+            startIndex,
+            (startIndex + 2) > imagePaths.length
+                ? imagePaths.length
+                : startIndex + 2,
+          );
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(itemsOnPage.length, (itemIndex) {
+              final actualIndex = startIndex + itemIndex;
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, pageroutes[actualIndex]);
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      imagePaths[index],
-                      width: 400, // Adjust size as needed
-                      height: 400,
+                      imagePaths[actualIndex],
+                      width: 350, // Adjust size as needed
+                      height: 350,
                     ),
                     SizedBox(height: 20),
                     Text(
-                      labels[index],
+                      labels[actualIndex],
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF001F3F), // Dark Navy
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
+              );
+            }),
           );
         },
       ),
