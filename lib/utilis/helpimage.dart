@@ -7,12 +7,12 @@ class ImageContainer extends StatefulWidget {
   final bool isCorrect; // Flag to determine correct/incorrect state
   final VoidCallback onTap;
 
-
-  const ImageContainer(
-      {super.key, required this.imagePath,
-      this.isCorrect = false,
-      required this.onTap,
-      });
+  const ImageContainer({
+    super.key,
+    required this.imagePath,
+    this.isCorrect = false,
+    required this.onTap,
+  });
 
   @override
   _ImageContainerState createState() => _ImageContainerState();
@@ -48,7 +48,6 @@ class _ImageContainerState extends State<ImageContainer> {
           if (widget.isCorrect) {
             widget.onTap(); // Call the callback when correct
           }
-          
         });
       },
       child: Container(
@@ -64,6 +63,69 @@ class _ImageContainerState extends State<ImageContainer> {
           height: 350,
           width: 300,
         ),
+      ),
+    );
+  }
+}
+
+class Helppage extends StatelessWidget {
+  const Helppage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, String>> options = [
+      {'icon': 'assets/icons/headache.png', 'title': 'Headache'},
+      {'icon': 'assets/icons/stress.png', 'title': 'Stress'},
+      {'icon': 'assets/icons/dizzy.png', 'title': 'Dizziness'},
+      {'icon': 'assets/icons/tired.png', 'title': 'Fatigue'},
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Help Options"),
+        backgroundColor: Color(0xFFE57373),
+      ),
+      body: GridView.builder(
+        padding: EdgeInsets.all(16),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1,
+        ),
+        itemCount: options.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              // Handle specific option tap
+            },
+            child: Card(
+              color: Color(0xFFFFEBEE),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    options[index]['icon']!,
+                    height: 80,
+                    width: 80,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    options[index]['title']!,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF263238),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

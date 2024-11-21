@@ -16,11 +16,12 @@ class Reading extends StatelessWidget {
     '/Readingmatch',
   ];
 
-   Reading({super.key});
+  Reading({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         actions: [
           IconButton(
@@ -34,7 +35,7 @@ class Reading extends StatelessWidget {
           'Reading-Therapy',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        backgroundColor: const Color(0xFFBDFCC9), // Seafoam Green
+        backgroundColor: Colors.white,
       ),
       drawer: Drawer(
         child: ListView(
@@ -42,13 +43,15 @@ class Reading extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Color(0xFFBDFCC9), // Seafoam Green
+                color: Color(0xFFFFEB3B),
               ),
-              child: Text(
-                'Quick Access',
-                style: TextStyle(
-                  color: Colors.green[800],
-                  fontSize: 34,
+              child: Center(
+                child: Text(
+                  'Quick Access',
+                  style: TextStyle(
+                    color: Color(0xFF263238),
+                    fontSize: 42,
+                  ),
                 ),
               ),
             ),
@@ -90,39 +93,48 @@ class Reading extends StatelessWidget {
           ],
         ),
       ),
-      body: PageView.builder(
-        itemCount: imagePaths.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, pageroutes[index]);
-            },
-            child: Container(
-              color: const Color(0xFFF2F2F2), // Light Gray background
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          SizedBox(height: 100), // Add spacing at the top
+          Expanded(
+            child: GridView.builder(
+              padding: EdgeInsets.all(12.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Three items per row
+                crossAxisSpacing: 10.0, // Spacing between items horizontally
+                mainAxisSpacing: 10.0, // Spacing between items vertically
+                childAspectRatio: 1.3, // Make items square
+              ),
+              itemCount: imagePaths.length,
+              itemBuilder: (context, index) {
+                return Column(
                   children: [
-                    Image.asset(
-                      imagePaths[index],
-                      width: 400, // Adjust size as needed
-                      height: 400,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, pageroutes[index]);
+                      },
+                      child: Image.asset(
+                        imagePaths[index],
+                        width: 300, // Adjust size as needed
+                        height: 300,
+                      ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 10), // Spacing between image and text
                     Text(
                       labels[index],
-                      style: const TextStyle(
-                        fontSize: 30,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF001F3F), // Dark Navy
                       ),
                     ),
                   ],
-                ),
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
