@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async'; // Required for the timer functionality
+import 'package:audioplayers/audioplayers.dart'; // Import audioplayers package
 
 class Meditation extends StatefulWidget {
   const Meditation({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class Meditation extends StatefulWidget {
 
 class _MeditationState extends State<Meditation> {
   final List<String> timerOptions = [
-    '00:02:00',
+    '00:01:00',
     '00:05:00',
     '00:10:00'
   ]; // List of timer options
@@ -18,24 +19,33 @@ class _MeditationState extends State<Meditation> {
   int? remainingSeconds; // Remaining seconds for the countdown
   Timer? countdownTimer; // Timer instance for the countdown
   bool isTimerRunning = false; // To track the timer state
+  final AudioPlayer _audioPlayer = AudioPlayer(); // AudioPlayer instance for bell sound
 
   @override
   void dispose() {
     countdownTimer?.cancel(); // Cancel timer if active
+    _audioPlayer.dispose(); // Dispose AudioPlayer
     super.dispose();
   }
 
   void startTimer() {
     if (remainingSeconds == null || remainingSeconds! <= 0) return;
 
-    countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    // Play the bell sound 2 seconds after the timer starts
+    Future.delayed(const Duration(seconds: 2), () {
+      if (isTimerRunning) {
+        playBellSound();
+      }
+    });
+
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds! > 0) {
         setState(() {
           remainingSeconds = remainingSeconds! - 1;
         });
       } else {
         timer.cancel();
-        playCompletionSound();
+        playCompletionSound(); // Play bell sound when the timer runs out
         setState(() {
           isTimerRunning = false;
         });
@@ -52,14 +62,18 @@ class _MeditationState extends State<Meditation> {
     setState(() {
       isTimerRunning = false;
     });
+    playCompletionSound(); // Play bell sound when the timer is stopped
   }
 
-  void playCompletionSound() {
-    // Integrate a package like `audioplayers` for sound
-    // Example:
-    // AudioPlayer player = AudioPlayer();
-    // await player.play('assets/completion_sound.mp3');
-    print('Timer completed! Play sound.');
+  Future<void> playBellSound() async {
+    await _audioPlayer.play(AssetSource('meditationpage/bell-a-99888.mp3'));
+  }
+
+  Future<void> playCompletionSound() async {
+    for (int i = 0; i < 3; i++) {
+      await playBellSound(); // Play the bell sound
+      await Future.delayed(const Duration(seconds: 1)); // Delay for 1 second between bell sounds
+    }
   }
 
   int parseTimeToSeconds(String time) {
@@ -70,17 +84,16 @@ class _MeditationState extends State<Meditation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFE3F2FD),
+      backgroundColor: const Color(0xFFE3F2FD),
       appBar: AppBar(
-        title: Text('Meditation'),
+        title: const Text('Meditation'),
       ),
       body: Stack(
         children: [
           Align(
-            alignment: Alignment
-                .topCenter, // You can change this to any other alignment
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20),
+            alignment: Alignment.topCenter,
+            child: const Padding(
+              padding: EdgeInsets.only(top: 20),
               child: Text(
                 'Welcome to Meditation Page!',
                 style: TextStyle(fontSize: 24, color: Colors.black),
@@ -104,7 +117,7 @@ class _MeditationState extends State<Meditation> {
                 ],
               ),
               child: Image.asset(
-                'assets/meditationpage/medi1.jpg',
+                'assets/meditationpage/yoga.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -112,7 +125,7 @@ class _MeditationState extends State<Meditation> {
           Positioned(
             top: MediaQuery.of(context).size.height / 2 - 220,
             right: 80,
-            child: Text(
+            child: const Text(
               'Choose your timer',
               style: TextStyle(fontSize: 24, color: Colors.black),
               textAlign: TextAlign.center,
@@ -120,7 +133,7 @@ class _MeditationState extends State<Meditation> {
           ),
           Positioned(
             top: MediaQuery.of(context).size.height / 2 - 150,
-            right: 140, // Positioning the timer options on the right
+            right: 140,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -134,8 +147,8 @@ class _MeditationState extends State<Meditation> {
                         }
                       },
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        padding: EdgeInsets.all(8),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: selectedTime == time
                               ? Colors.blue.shade100
@@ -145,28 +158,28 @@ class _MeditationState extends State<Meditation> {
                         ),
                         child: Text(
                           time,
-                          style: TextStyle(fontSize: 18, color: Colors.black),
+                          style: const TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
                     )),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 if (selectedTime != null)
                   Column(
                     children: [
                       Text(
                         'Selected: $selectedTime',
-                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        style: const TextStyle(fontSize: 16, color: Colors.black),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       if (!isTimerRunning)
                         ElevatedButton(
                           onPressed: startTimer,
-                          child: Text('Start Timer'),
+                          child: const Text('Start Timer'),
                         ),
                       if (isTimerRunning)
                         ElevatedButton(
                           onPressed: stopTimer,
-                          child: Text('Stop Timer'),
+                          child: const Text('Stop Timer'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                           ),
@@ -175,10 +188,10 @@ class _MeditationState extends State<Meditation> {
                   ),
                 if (isTimerRunning && remainingSeconds != null)
                   Padding(
-                    padding: EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Text(
                       'Remaining: ${Duration(seconds: remainingSeconds!).toString().split('.').first}',
-                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      style: const TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
               ],

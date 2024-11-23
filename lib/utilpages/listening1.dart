@@ -27,7 +27,7 @@ class _ListeningpictureState extends State<Listeningpicture> {
     "car",
     "chair",
     "cheetah",
-    "chimpangee"
+    "chimpanzee"
   ];
   List<bool> leftvalidations = [
     true,
@@ -63,7 +63,7 @@ class _ListeningpictureState extends State<Listeningpicture> {
     'assets/images/car.jpg',
     'assets/images/chair.jpg',
     'assets/images/charger.jpg',
-    'assets/images/chimpangee.jpg',
+    'assets/images/chimpanzee.jpg',
   ];
   List<String> RightImages = [
     'assets/images/bag.jpg',
@@ -78,22 +78,25 @@ class _ListeningpictureState extends State<Listeningpicture> {
     'assets/images/colorpencils.jpg',
   ];
 
-  int currentPairIndex = 0;
+  int currentPairIndex = 0; // Track the current question index
+  int totalanswer = 0; // Track the total correct answers
   Timer? _feedbackTimer; // Timer for feedback and delay
 
   @override
   void dispose() {
     _feedbackTimer?.cancel(); // Cancel timer on widget disposal
+    flutterTts.stop(); // Stop TTS if it's still speaking
     super.dispose();
   }
 
   void skipfn() {
+    _feedbackTimer?.cancel();
     setState(() {
-      if (!(currentPairIndex + 1 == leftvalidations.length)) {
+      if (currentPairIndex < leftvalidations.length - 1) {
         poptext = "Select an Image ...";
-        currentPairIndex = currentPairIndex + 1;
+        currentPairIndex++;
       } else {
-       Navigator.pushNamed(context, '/completion', arguments: totalanswer);
+        navigateToCompletion();
       }
     });
   }
@@ -101,25 +104,27 @@ class _ListeningpictureState extends State<Listeningpicture> {
   void stopfn() {
     Navigator.pop(context);
   }
-int totalanswer=0;
+
   void oncorrecttap() {
+    _feedbackTimer?.cancel(); // Cancel any existing timer
     setState(() {
       poptext = 'Correct!';
       totalanswer++;
       _feedbackTimer = Timer(Duration(seconds: 2), () {
-        // 2-second delay
         setState(() {
-          poptext = 'Select an Image';
-          if (!(currentPairIndex + 1 == leftvalidations.length)) {
+          if (currentPairIndex < leftvalidations.length - 1) {
             poptext = "Select an Image ...";
-            currentPairIndex = currentPairIndex + 1;
+            currentPairIndex++;
           } else {
-           Navigator.pushNamed(context, '/completion', arguments: totalanswer);
-
+            navigateToCompletion();
           }
         });
       });
     });
+  }
+
+  void navigateToCompletion() {
+    Navigator.pushNamed(context, '/completion', arguments: totalanswer);
   }
 
   @override
@@ -129,70 +134,87 @@ int totalanswer=0;
       appBar: AppBar(
         title: Text(
           'Listen and Choose the Picture',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Color(0xFFBDFCC9),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SpeechFromText(textToSpeak: prompt_text[currentPairIndex]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              TappableImageContainer(
-                imagePath: LeftImages[currentPairIndex],
-                isCorrect: leftvalidations[currentPairIndex],
-                onCorrectTap: oncorrecttap,
-                oninCorrectTap: () {
-                  setState(() => poptext = 'Wrong!');
-                  totalanswer--;
-                },
-              ),
-              TappableImageContainer(
-                imagePath: RightImages[currentPairIndex],
-                isCorrect: rightvalidations[currentPairIndex],
-                onCorrectTap: oncorrecttap,
-                oninCorrectTap: () {
-                  setState(() => poptext = 'Wrong!');
-                  totalanswer--;
-                },
-              ),
-            ],
-          ),
-          Container(
-            child: Text(
-              poptext,
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          // Text-to-Speech and Prompt Text Section
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SpeechFromText(textToSpeak: prompt_text[currentPairIndex]),
+                SizedBox(height: 10),
+                Text(
+                  poptext,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: skipfn, // Add skip logic here
-                child: Text(
-                  'Skip',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+
+          // Images Section
+          Expanded(
+            flex: 3,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Left Image
+                TappableImageContainer(
+                  imagePath: LeftImages[currentPairIndex],
+                  isCorrect: leftvalidations[currentPairIndex],
+                  onCorrectTap: oncorrecttap,
+                  oninCorrectTap: () {
+                    setState(() => poptext = 'Wrong!');
+                    totalanswer--;
+                  },
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange, // Example skip button color
+                // Right Image
+                TappableImageContainer(
+                  imagePath: RightImages[currentPairIndex],
+                  isCorrect: rightvalidations[currentPairIndex],
+                  onCorrectTap: oncorrecttap,
+                  oninCorrectTap: () {
+                    setState(() => poptext = 'Wrong!');
+                    totalanswer--;
+                  },
                 ),
-              ),
-              SizedBox(
-                width: 100,
-              ),
-              ElevatedButton(
-                onPressed: stopfn, // Add stop logic here
-                child: Text(
-                  'Stop Exercise',
-                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              ],
+            ),
+          ),
+
+          // Buttons Section
+          Expanded(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: skipfn, // Skip button logic
+                  child: Text(
+                    'Skip',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange, // Skip button color
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Example stop button color
+                SizedBox(width: 50),
+                ElevatedButton(
+                  onPressed: stopfn, // Stop button logic
+                  child: Text(
+                    'Stop Exercise',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Stop button color
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

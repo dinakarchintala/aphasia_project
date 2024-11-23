@@ -2,12 +2,16 @@ import 'package:aphasia_bot/utilpages/Familyquiz.dart';
 import 'package:flutter/material.dart';
 import 'package:aphasia_bot/utilpages/memoriesvideo.dart';
 import 'package:aphasia_bot/utilpages/ReligiousBooksPage.dart';
+import 'package:provider/provider.dart';
+import 'package:aphasia_bot/services/translation_service.dart';
 
 class Funspace extends StatelessWidget {
   const Funspace({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var translationService = Provider.of<TranslationService>(context);
+
     // List of subsections
     List<String> titles = [
       "Memories",
@@ -35,60 +39,96 @@ class Funspace extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'FunSpace',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        title: FutureBuilder<String>(
+          future: translationService.getTranslation('FunSpace'),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            return Text(
+              snapshot.data ?? 'FunSpace',
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            );
+          },
         ),
         backgroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.translate),
+            onSelected: (String languageCode) {
+              translationService.changeLanguage(languageCode);
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'en', child: Text('English')),
+              PopupMenuItem(value: 'ta', child: Text('Tamil')),
+              PopupMenuItem(value: 'hi', child: Text('Hindi')),
+              PopupMenuItem(value: 'te', child: Text('Telugu')),
+              PopupMenuItem(value: 'ml', child: Text('Malayalam')),
+            ],
+          ),
+        ],
       ),
-      backgroundColor: Color(0xFFE3F2FD),
-      body: GridView.builder(
-        padding: EdgeInsets.all(16),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Two items per row
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 2,
-        ),
-        itemCount: titles.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            child: Card(
-              color: Color(0xFFFFFFFF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+      backgroundColor: const Color(0xFFE3F2FD),
+      body: FutureBuilder<List<String>>(
+        future: Future.wait(titles.map((title) => translationService.getTranslation(title))),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List<String> translatedTitles = snapshot.data ?? titles;
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Two items per row
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 2,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => pages[index]),
-                      );
-                    },
-                    child: Image.asset(
-                      images[index],
-                      height: 180,
-                      width: 180,
-                      fit: BoxFit.cover,
+              itemCount: translatedTitles.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  child: Card(
+                    color: const Color(0xFFFFFFFF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => pages[index]),
+                            );
+                          },
+                          child: Image.asset(
+                            images[index],
+                            height: 180,
+                            width: 180,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          translatedTitles[index],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF263238),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    titles[index],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF263238),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+                );
+              },
+            );
+          }
         },
       ),
     );
@@ -96,41 +136,15 @@ class Funspace extends StatelessWidget {
 }
 
 // Placeholder pages for each section
-// class MemoriesPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Memories'),
-//         backgroundColor: Colors.white,
-//       ),
-//       body: Center(child: Text('Welcome to Memories!')),
-//     );
-//   }
-// }
-
-// class FunQuizPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Fun Quiz'),
-//         backgroundColor: Colors.white,
-//       ),
-//       body: Center(child: Text('Welcome to Fun Quiz!')),
-//     );
-//   }
-// }
-
 class StorytellingSessionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Storytelling Session'),
+        title: const Text('Storytelling Session'),
         backgroundColor: Colors.white,
       ),
-      body: Center(child: Text('Welcome to Storytelling Session!')),
+      body: const Center(child: Text('Welcome to Storytelling Session!')),
     );
   }
 }
@@ -140,23 +154,10 @@ class ArtsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Arts'),
+        title: const Text('Arts'),
         backgroundColor: Colors.white,
       ),
-      body: Center(child: Text('Welcome to Arts!')),
+      body: const Center(child: Text('Welcome to Arts!')),
     );
   }
 }
-
-// class ReligiousBooksPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Religious Books'),
-//         backgroundColor: Colors.white,
-//       ),
-//       body: Center(child: Text('Welcome to Religious Books!')),
-//     );
-//   }
-// }
