@@ -1,23 +1,18 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, library_private_types_in_public_api, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_final_fields
-
 import 'dart:async';
-
-import 'package:aphasia_bot/utilis/tappableimage.dart';
-import 'package:aphasia_bot/utilis/ttsbutton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-class Listeningpicture extends StatefulWidget {
-  const Listeningpicture({super.key});
+class ListeningPicture extends StatefulWidget {
+  const ListeningPicture({super.key});
 
   @override
-  _ListeningpictureState createState() => _ListeningpictureState();
+  _ListeningPictureState createState() => _ListeningPictureState();
 }
 
-class _ListeningpictureState extends State<Listeningpicture> {
-  FlutterTts flutterTts = FlutterTts();
+class _ListeningPictureState extends State<ListeningPicture> {
+  final FlutterTts _flutterTts = FlutterTts();
   String poptext = "Select an Image ...";
-  List<String> prompt_text = [
+  List<String> promptText = [
     "apple",
     "beach",
     "belt",
@@ -29,31 +24,9 @@ class _ListeningpictureState extends State<Listeningpicture> {
     "cheetah",
     "chimpanzee"
   ];
-  List<bool> leftvalidations = [
-    true,
-    true,
-    true,
-    false,
-    false,
-    false,
-    true,
-    true,
-    false,
-    true
-  ];
-  List<bool> rightvalidations = [
-    false,
-    true,
-    false,
-    true,
-    true,
-    true,
-    false,
-    false,
-    true,
-    false
-  ];
-  List<String> LeftImages = [
+  List<bool> leftValidations = [true, true, true, false, false, false, true, true, false, true];
+  List<bool> rightValidations = [false, false, false, true, true, true, false, false, true, false];
+  List<String> leftImages = [
     'assets/images/apple.jpg',
     'assets/images/beach.jpg',
     'assets/images/belt.jpg',
@@ -63,9 +36,9 @@ class _ListeningpictureState extends State<Listeningpicture> {
     'assets/images/car.jpg',
     'assets/images/chair.jpg',
     'assets/images/charger.jpg',
-    'assets/images/chimpanzee.jpg',
+    'assets/images/chimpangee.jpg',
   ];
-  List<String> RightImages = [
+  List<String> rightImages = [
     'assets/images/bag.jpg',
     'assets/images/banana.jpg',
     'assets/images/bed.jpg',
@@ -79,144 +52,201 @@ class _ListeningpictureState extends State<Listeningpicture> {
   ];
 
   int currentPairIndex = 0; // Track the current question index
-  int totalanswer = 0; // Track the total correct answers
+  int totalCorrectAnswers = 0; // Track the total correct answers
   Timer? _feedbackTimer; // Timer for feedback and delay
 
   @override
-  void dispose() {
-    _feedbackTimer?.cancel(); // Cancel timer on widget disposal
-    flutterTts.stop(); // Stop TTS if it's still speaking
-    super.dispose();
+  void initState() {
+    super.initState();
+    _initializeTts();
   }
 
-  void skipfn() {
-    _feedbackTimer?.cancel();
-    setState(() {
-      if (currentPairIndex < leftvalidations.length - 1) {
-        poptext = "Select an Image ...";
-        currentPairIndex++;
-      } else {
-        navigateToCompletion();
-      }
-    });
-  }
+  Future<void> _initializeTts() async {
+    await _flutterTts.setLanguage("en-US");
+    await _flutterTts.setSpeechRate(0.5); // Adjust speech rate
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
 
-  void stopfn() {
-    Navigator.pop(context);
-  }
-
-  void oncorrecttap() {
-    _feedbackTimer?.cancel(); // Cancel any existing timer
-    setState(() {
-      poptext = 'Correct!';
-      totalanswer++;
-      _feedbackTimer = Timer(Duration(seconds: 2), () {
-        setState(() {
-          if (currentPairIndex < leftvalidations.length - 1) {
-            poptext = "Select an Image ...";
-            currentPairIndex++;
-          } else {
-            navigateToCompletion();
-          }
-        });
+    // Handle errors with TTS
+    _flutterTts.setErrorHandler((msg) {
+      debugPrint("TTS Error: $msg");
+      setState(() {
+        poptext = "Error with Text-to-Speech!";
       });
     });
   }
 
-  void navigateToCompletion() {
-    Navigator.pushNamed(context, '/completion', arguments: totalanswer);
+  @override
+  void dispose() {
+    _feedbackTimer?.cancel(); // Cancel timer on widget disposal
+    _flutterTts.stop(); // Stop TTS if it's still speaking
+    super.dispose();
+  }
+
+  void _skipQuestion() {
+    _feedbackTimer?.cancel();
+    setState(() {
+      if (currentPairIndex < leftValidations.length - 1) {
+        poptext = "Select an Image ...";
+        currentPairIndex++;
+      } else {
+        _navigateToCompletion();
+      }
+    });
+  }
+
+  void _stopExercise() {
+    _feedbackTimer?.cancel();
+    Navigator.pop(context);
+  }
+
+  void _onCorrectTap() {
+    _feedbackTimer?.cancel(); // Cancel any existing timer
+    setState(() {
+      poptext = 'Correct!';
+      totalCorrectAnswers++;
+      _feedbackTimer = Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() {
+            if (currentPairIndex < leftValidations.length - 1) {
+              poptext = "Select an Image ...";
+              currentPairIndex++;
+            } else {
+              _navigateToCompletion();
+            }
+          });
+        }
+      });
+    });
+  }
+
+  void _onWrongTap() {
+    _feedbackTimer?.cancel(); // Cancel any existing timer
+    setState(() {
+      poptext = 'Wrong!';
+      totalCorrectAnswers = (totalCorrectAnswers > 0) ? totalCorrectAnswers - 1 : 0;
+    });
+  }
+
+  void _navigateToCompletion() {
+    Navigator.pushNamed(context, '/completion', arguments: totalCorrectAnswers);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF2F2F2),
+      backgroundColor: const Color(0xFFF2F2F2),
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Listen and Choose the Picture',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color(0xFFBDFCC9),
+        backgroundColor: const Color(0xFFBDFCC9),
       ),
-      body: Column(
-        children: [
-          // Text-to-Speech and Prompt Text Section
-          Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SpeechFromText(textToSpeak: prompt_text[currentPairIndex]),
-                SizedBox(height: 10),
-                Text(
-                  poptext,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Text-to-Speech and Prompt Text Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await _flutterTts.speak(promptText[currentPairIndex]);
+                        } catch (e) {
+                          debugPrint("TTS Error: $e");
+                        }
+                      },
+                      child: const Icon(Icons.volume_up),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      poptext,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
 
-          // Images Section
-          Expanded(
-            flex: 3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Left Image
-                TappableImageContainer(
-                  imagePath: LeftImages[currentPairIndex],
-                  isCorrect: leftvalidations[currentPairIndex],
-                  onCorrectTap: oncorrecttap,
-                  oninCorrectTap: () {
-                    setState(() => poptext = 'Wrong!');
-                    totalanswer--;
-                  },
+              // Images Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Left Image
+                    GestureDetector(
+                      onTap: () {
+                        if (leftValidations[currentPairIndex]) {
+                          _onCorrectTap();
+                        } else {
+                          _onWrongTap();
+                        }
+                      },
+                      child: Image.asset(
+                        leftImages[currentPairIndex],
+                        width: 250, // Increased size
+                        height: 250,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    // Right Image
+                    GestureDetector(
+                      onTap: () {
+                        if (rightValidations[currentPairIndex]) {
+                          _onCorrectTap();
+                        } else {
+                          _onWrongTap();
+                        }
+                      },
+                      child: Image.asset(
+                        rightImages[currentPairIndex],
+                        width: 250, // Increased size
+                        height: 250,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
                 ),
-                // Right Image
-                TappableImageContainer(
-                  imagePath: RightImages[currentPairIndex],
-                  isCorrect: rightvalidations[currentPairIndex],
-                  onCorrectTap: oncorrecttap,
-                  oninCorrectTap: () {
-                    setState(() => poptext = 'Wrong!');
-                    totalanswer--;
-                  },
-                ),
-              ],
-            ),
-          ),
+              ),
 
-          // Buttons Section
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: skipfn, // Skip button logic
-                  child: Text(
-                    'Skip',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange, // Skip button color
-                  ),
+              // Buttons Section
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _skipQuestion,
+                      child: const Text(
+                        'Skip',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 50),
+                    ElevatedButton(
+                      onPressed: _stopExercise,
+                      child: const Text(
+                        'Stop Exercise',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 50),
-                ElevatedButton(
-                  onPressed: stopfn, // Stop button logic
-                  child: Text(
-                    'Stop Exercise',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Stop button color
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

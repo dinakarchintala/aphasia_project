@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:aphasia_bot/utilis/tappableimage.dart';
 import 'package:aphasia_bot/utilis/tappabletext.dart';
 import 'package:aphasia_bot/utilis/ttsbutton.dart';
 import 'package:flutter/material.dart';

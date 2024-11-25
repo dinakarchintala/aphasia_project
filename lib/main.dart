@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:aphasia_bot/services/translation_service.dart'; // Import your TranslationService class
 import 'package:aphasia_bot/pages/helppage.dart';
@@ -29,7 +28,6 @@ import 'package:aphasia_bot/utilpages/speaking3.dart';
 import 'package:aphasia_bot/utilpages/writing1.dart';
 import 'package:aphasia_bot/utilpages/writing2.dart';
 import 'package:aphasia_bot/utilpages/writing3.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +69,7 @@ class MyApp extends StatelessWidget {
         '/Writing': (context) => Writing(),
         '/Speaking': (context) => Speaking(),
         '/Reading': (context) => Reading(),
-        '/Listeningpicture': (context) => Listeningpicture(),
+        '/Listeningpicture': (context) => ListeningPicture(),
         '/Listeningword': (context) => Listeningword(),
         '/Listeningalphabet': (context) => ListeningAlphabet(),
         '/Writingpicture': (context) => Writingpicture(),
