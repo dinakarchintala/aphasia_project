@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For base64 encoding
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Foodorder extends StatefulWidget {
   @override
