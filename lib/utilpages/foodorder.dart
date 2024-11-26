@@ -10,15 +10,10 @@ class Foodorder extends StatefulWidget {
 
 class _FoodOrderPageState extends State<Foodorder> {
   // Twilio credentials
-  // final accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
-  // final authToken = 'fc46038c5f76baa46a16c6e0397443db';
-  // final fromPhone = '+13345106729';
-  // final toPhone = '+919110307224';
-
-  final accountSid = '';
-  final authToken = '';
-  final fromPhone = '';
-  final toPhone = '';
+  final accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
+  final authToken = 'fc46038c5f76baa46a16c6e0397443db';
+  final fromPhone = '+13345106729';
+  final toPhone = '+919110307224';
 
   // Food categories
   final Map<String, List<Map<String, String>>> foodOptions = {

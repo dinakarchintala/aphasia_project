@@ -71,16 +71,10 @@ class _HelppageState extends State<Helppage> {
   // }
 
   Future<void> _sendSmsUsingTwilio(String message) async {
-    // const accountSid =
-    //     'ACe3d8789786eae8151ea0cc74f7777579';
-    // const authToken =
-    //     'fc46038c5f76baa46a16c6e0397443db';
-    // const fromPhone = '+13345106729';
-    // const toPhone = '+919110307224';
-    const accountSid = '';
-    const authToken = '';
-    const fromPhone = '';
-    const toPhone = '';
+    const accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
+    const authToken = 'fc46038c5f76baa46a16c6e0397443db';
+    const fromPhone = '+13345106729';
+    const toPhone = '+919110307224';
 
     final Uri url = Uri.parse(
         'https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json');
