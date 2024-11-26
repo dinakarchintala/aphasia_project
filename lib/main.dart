@@ -30,13 +30,11 @@ import 'package:aphasia_bot/utilpages/writing2.dart';
 import 'package:aphasia_bot/utilpages/writing3.dart';
 import 'package:aphasia_bot/utilpages/foodorder.dart';
 import 'package:aphasia_bot/utilpages/artspage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.landscapeLeft,
-  //   DeviceOrientation.landscapeRight,
-  // ]).then((_) {
+  // await dotenv.load();
   runApp(
     MultiProvider(
       providers: [
@@ -45,7 +43,6 @@ void main() {
       child: MyApp(),
     ),
   );
-  // });
 }
 
 class MyApp extends StatelessWidget {

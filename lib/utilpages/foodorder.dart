@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For base64 encoding
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Foodorder extends StatefulWidget {
   @override
@@ -9,10 +10,15 @@ class Foodorder extends StatefulWidget {
 
 class _FoodOrderPageState extends State<Foodorder> {
   // Twilio credentials
-  final accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
-  final authToken = 'fc46038c5f76baa46a16c6e0397443db';
-  final fromPhone = '+13345106729';
-  final toPhone = '+919110307224';
+  // final accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
+  // final authToken = 'fc46038c5f76baa46a16c6e0397443db';
+  // final fromPhone = '+13345106729';
+  // final toPhone = '+919110307224';
+
+  final accountSid = '';
+  final authToken = '';
+  final fromPhone = '';
+  final toPhone = '';
 
   // Food categories
   final Map<String, List<Map<String, String>>> foodOptions = {
