@@ -28,13 +28,13 @@ import 'package:aphasia_bot/utilpages/speaking3.dart';
 import 'package:aphasia_bot/utilpages/writing1.dart';
 import 'package:aphasia_bot/utilpages/writing2.dart';
 import 'package:aphasia_bot/utilpages/writing3.dart';
+import 'package:aphasia_bot/utilpages/foodorder.dart';
+import 'package:aphasia_bot/utilpages/artspage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.landscapeLeft,
-  //   DeviceOrientation.landscapeRight,
-  // ]).then((_) {
+  // await dotenv.load();
   runApp(
     MultiProvider(
       providers: [
@@ -43,7 +43,6 @@ void main() {
       child: MyApp(),
     ),
   );
-  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -61,11 +60,13 @@ class MyApp extends StatelessWidget {
         '/Memoriesvideo': (context) => Memoriesvideo(),
         '/Meditation': (context) => Meditation(),
         '/Callschedule': (context) => Callschedule(),
+        '/Foodorder': (context) => Foodorder(),
         '/Religiousbookspage': (context) => ReligiousBooksPage(),
         '/Funspace': (context) => Funspace(),
         '/Homedesign': (context) => Homedesign(),
         '/Listening': (context) => Listening(),
         '/Familyquiz': (context) => Familyquiz(),
+        '/artspage': (context) => Artspage(),
         '/Writing': (context) => Writing(),
         '/Speaking': (context) => Speaking(),
         '/Reading': (context) => Reading(),
@@ -77,7 +78,7 @@ class MyApp extends StatelessWidget {
         '/Writingalphabet': (context) => Writingalphabet(),
         '/Speakingpicture': (context) => Speakingpicture(),
         '/Speakingword': (context) => Speakingword(),
-        '/Spekaingalphabet': (context) => Speakingalphabet(),
+        '/Speakingalphabet': (context) => Speakingalphabet(),
         '/Readingpicture': (context) => ReadAndChoosePage(),
         '/Readingmatch': (context) => ReadAndMatch(),
         '/completion': (context) => CompletionPage(),

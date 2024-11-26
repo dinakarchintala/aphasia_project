@@ -77,13 +77,13 @@ class _WritingwordState extends State<Writingword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text(
           'Write the word spoken aloud',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

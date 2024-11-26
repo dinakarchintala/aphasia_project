@@ -45,7 +45,7 @@ class _SpeakingpictureState extends State<Speakingpicture> {
   void skipfn() {
     setState(() {
       if (!(current_index + 1 == Answers.length)) {
-        feedbackText = "Select an Image ...";
+        feedbackText = "Speak the word ...";
         current_index = current_index + 1;
       } else {
         Navigator.pushNamed(context, '/completion');
@@ -69,7 +69,7 @@ class _SpeakingpictureState extends State<Speakingpicture> {
       _feedbackTimer = Timer(const Duration(seconds: 2), () {
         // 2-second delay
         setState(() {
-          feedbackText = 'Select an image';
+          feedbackText = 'Speak the word';
           if (!(current_index + 1 == Answers.length)) {
             current_index = current_index + 1;
           } else {
@@ -83,10 +83,10 @@ class _SpeakingpictureState extends State<Speakingpicture> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text('Read the Picture'),
-        backgroundColor: const Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
       body: Center(
         child: Column(
@@ -108,7 +108,8 @@ class _SpeakingpictureState extends State<Speakingpicture> {
               padding: const EdgeInsets.all(20.0),
               child: Text(
                 feedbackText,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(

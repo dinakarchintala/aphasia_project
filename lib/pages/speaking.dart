@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class Speaking extends StatelessWidget {
   final List<String> imagePaths = [
-    'assets/images/speaking.jpeg',
-    'assets/images/speaking.jpeg',
-    'assets/images/speaking.jpeg',
+    'assets/images/speaking.jpg',
+    'assets/images/speaking.jpg',
+    'assets/images/speaking.jpg',
   ];
 
   final List<String> labels = [

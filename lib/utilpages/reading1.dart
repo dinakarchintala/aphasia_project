@@ -1,8 +1,9 @@
+import 'package:flutter_tts/flutter_tts.dart';
+
 import 'dart:async';
 
 import 'package:aphasia_bot/utilis/tappableimage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 class ReadAndChoosePage extends StatefulWidget {
   const ReadAndChoosePage({super.key});
@@ -16,15 +17,11 @@ class _ReadAndChoosePageState extends State<ReadAndChoosePage> {
   String poptext = "Select an Image ...";
   List<String> prompt_text = [
     "apple",
-    "beach",
-    "belt",
-    "bike",
+    "cat",
     "bulb",
-    "bus",
-    "car",
-    "chair",
+    "cat",
+    "chimpanzee",
     "charger",
-    "chimpangee"
   ];
   List<bool> leftvalidations = [
     true,
@@ -33,46 +30,30 @@ class _ReadAndChoosePageState extends State<ReadAndChoosePage> {
     false,
     false,
     false,
-    true,
-    true,
-    false,
-    true
   ];
   List<bool> rightvalidations = [
     false,
-    true,
-    false,
-    true,
-    true,
-    true,
     false,
     false,
     true,
-    false
+    true,
+    true,
   ];
-  List<String> LeftImages = [
+  List<String> leftImages = [
     'assets/images/apple.jpg',
-    'assets/images/beach.jpg',
-    'assets/images/belt.jpg',
-    'assets/images/bike.jpg',
+    'assets/images/cat.jpg',
     'assets/images/bulb.jpg',
-    'assets/images/bus.jpg',
-    'assets/images/car.jpg',
-    'assets/images/chair.jpg',
-    'assets/images/charger.jpg',
-    'assets/images/chimpangee.jpg',
+    'assets/images/butterfly.jpg',
+    'assets/images/cheetah.jpeg',
+    'assets/images/colorpencils.jpg',
   ];
-  List<String> RightImages = [
+  List<String> rightImages = [
     'assets/images/bag.jpg',
     'assets/images/banana.jpg',
-    'assets/images/bed.jpg',
-    'assets/images/books.jpg',
-    'assets/images/bottle.jpg',
-    'assets/images/butterfly.jpg',
-    'assets/images/calendar.jpg',
+    'assets/images/bus.jpg',
     'assets/images/cat.jpg',
-    'assets/images/cheetah.jpg',
-    'assets/images/colorpencils.jpg',
+    'assets/images/chimpanzee.jpeg',
+    'assets/images/charger.jpeg',
   ];
 
   int currentPairIndex = 0;
@@ -119,78 +100,96 @@ class _ReadAndChoosePageState extends State<ReadAndChoosePage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text(
           'Read and Choose the Picture',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            prompt_text[currentPairIndex],
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              TappableImageContainer(
-                imagePath: LeftImages[currentPairIndex],
-                isCorrect: leftvalidations[currentPairIndex],
-                onCorrectTap: oncorrecttap,
-                oninCorrectTap: () {
-                  setState(() => poptext = 'Wrong!');
-                },
-              ),
-              TappableImageContainer(
-                imagePath: RightImages[currentPairIndex],
-                isCorrect: rightvalidations[currentPairIndex],
-                onCorrectTap: oncorrecttap,
-                oninCorrectTap: () {
-                  setState(() => poptext = 'Wrong!');
-                },
-              ),
-            ],
-          ),
-          Container(
-            child: Text(
-              poptext,
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Prompt text
+            Text(
+              prompt_text[currentPairIndex],
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: skipfn,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange, // Example skip button color
-                ), // Add skip logic here
-                child: Text(
-                  'Skip',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            // Image row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Flexible(
+                  child: TappableImageContainer(
+                    imagePath: leftImages[currentPairIndex],
+                    isCorrect: leftvalidations[currentPairIndex],
+                    onCorrectTap: oncorrecttap,
+                    oninCorrectTap: () {
+                      setState(() => poptext = 'Wrong!');
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 100,
-              ),
-              ElevatedButton(
-                onPressed: stopfn,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Example stop button color
-                ), // Add stop logic here
-                child: Text(
-                  'Stop Exercise',
-                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                Flexible(
+                  child: TappableImageContainer(
+                    imagePath: rightImages[currentPairIndex],
+                    isCorrect: rightvalidations[currentPairIndex],
+                    onCorrectTap: oncorrecttap,
+                    oninCorrectTap: () {
+                      setState(() => poptext = 'Wrong!');
+                    },
+                  ),
                 ),
+              ],
+            ),
+            // Feedback text
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                poptext,
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
-        ],
+            ),
+            // Buttons for skip and stop
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: skipfn,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.08, vertical: 16),
+                  ),
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: stopfn,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.08, vertical: 16),
+                  ),
+                  child: const Text(
+                    'Stop Exercise',
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

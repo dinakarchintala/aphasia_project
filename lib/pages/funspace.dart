@@ -1,6 +1,7 @@
 import 'package:aphasia_bot/utilpages/Familyquiz.dart';
 import 'package:flutter/material.dart';
 import 'package:aphasia_bot/utilpages/memoriesvideo.dart';
+import 'package:aphasia_bot/utilpages/artspage.dart';
 import 'package:aphasia_bot/utilpages/ReligiousBooksPage.dart';
 import 'package:provider/provider.dart';
 import 'package:aphasia_bot/services/translation_service.dart';
@@ -16,7 +17,7 @@ class Funspace extends StatelessWidget {
     List<String> titles = [
       "Memories",
       "Fun Quiz",
-      "Storytelling Session",
+      // "Storytelling Session",
       "Arts",
       "Reading Religious Books",
     ];
@@ -24,7 +25,7 @@ class Funspace extends StatelessWidget {
     List<String> images = [
       'assets/images/memories.png',
       'assets/images/family_quiz.png',
-      'assets/funspace/storytellingsession.jpeg',
+      // 'assets/funspace/storytellingsession.jpeg',
       'assets/funspace/art.jpeg',
       'assets/funspace/religousbooks.png',
     ];
@@ -32,8 +33,8 @@ class Funspace extends StatelessWidget {
     List<Widget> pages = [
       Memoriesvideo(), // Implement each corresponding page
       Familyquiz(),
-      StorytellingSessionPage(),
-      ArtsPage(),
+      // StorytellingSessionPage(),
+      Artspage(),
       ReligiousBooksPage(),
     ];
 
@@ -70,7 +71,8 @@ class Funspace extends StatelessWidget {
       ),
       backgroundColor: const Color(0xFFE3F2FD),
       body: FutureBuilder<List<String>>(
-        future: Future.wait(titles.map((title) => translationService.getTranslation(title))),
+        future: Future.wait(
+            titles.map((title) => translationService.getTranslation(title))),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -102,7 +104,8 @@ class Funspace extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => pages[index]),
+                              MaterialPageRoute(
+                                  builder: (context) => pages[index]),
                             );
                           },
                           child: Image.asset(
@@ -145,19 +148,6 @@ class StorytellingSessionPage extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       body: const Center(child: Text('Welcome to Storytelling Session!')),
-    );
-  }
-}
-
-class ArtsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Arts'),
-        backgroundColor: Colors.white,
-      ),
-      body: const Center(child: Text('Welcome to Arts!')),
     );
   }
 }

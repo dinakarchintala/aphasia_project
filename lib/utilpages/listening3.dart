@@ -88,13 +88,13 @@ class _ListeningAlphabetState extends State<ListeningAlphabet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text(
           'Listen and Choose the Alphabet',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

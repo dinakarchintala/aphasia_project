@@ -6,7 +6,7 @@ class TherapyHomePage extends StatelessWidget {
   final List<String> imagePaths = [
     'assets/images/listening.png',
     'assets/images/writing.jpeg',
-    'assets/images/speaking.jpeg',
+    'assets/images/speaking.jpg',
     'assets/images/reading.jpg',
   ];
 
@@ -43,7 +43,7 @@ class TherapyHomePage extends StatelessWidget {
           'Home',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        backgroundColor: Colors.white, // Seafoam Green
+        backgroundColor: Colors.white,
       ),
       drawer: Drawer(
         child: ListView(
@@ -51,13 +51,15 @@ class TherapyHomePage extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Color(0xFFBDFCC9), // Seafoam Green
+                color: Color(0xFFFFEB3B),
               ),
-              child: Text(
-                'Quick Access',
-                style: TextStyle(
-                  color: Colors.green[800],
-                  fontSize: 34,
+              child: Center(
+                child: Text(
+                  'Quick Access',
+                  style: TextStyle(
+                    color: Color(0xFF263238),
+                    fontSize: 42,
+                  ),
                 ),
               ),
             ),

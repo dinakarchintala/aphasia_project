@@ -18,10 +18,10 @@ class _HelppageState extends State<Helppage> {
     "I need Medicines",
     "I have a Headache",
     "I need to go to the Washroom",
-    "I need Dosa",
-    "I need Lunch",
     "I want to drink Water",
     "I want to go for a Walk",
+    "I am cold",
+    "I need a Blanket",
   ];
 
   List<String> Images = [
@@ -29,10 +29,10 @@ class _HelppageState extends State<Helppage> {
     'assets/images/Medicines.png',
     'assets/homepage/headache.jpg',
     'assets/images/Washroom.png',
-    'assets/images/Dosa.png',
-    'assets/images/Lunch.png',
     'assets/images/Water.png',
     'assets/images/Walking.png',
+    'assets/images/cold.jpg',
+    'assets/images/blanket.jpg',
   ];
 
   @override
@@ -71,12 +71,10 @@ class _HelppageState extends State<Helppage> {
   // }
 
   Future<void> _sendSmsUsingTwilio(String message) async {
-    const accountSid =
-        'ACe3d8789786eae8151ea0cc74f77775'; // Replace with your Twilio Account SID79
-    const authToken =
-        'fc46038c5f76baa46a16c6e0397443db'; // Replace with your Twilio Auth Token
-    const fromPhone = '+13345106729'; // Your Twilio phone number
-    const toPhone = '+919110307224'; // Recipient's phone number
+    const accountSid = 'ACe3d8789786eae8151ea0cc74f7777579';
+    const authToken = 'fc46038c5f76baa46a16c6e0397443db';
+    const fromPhone = '+13345106729';
+    const toPhone = '+919110307224';
 
     final Uri url = Uri.parse(
         'https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json');
