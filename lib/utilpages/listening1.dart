@@ -14,41 +14,43 @@ class _ListeningPictureState extends State<ListeningPicture> {
   String poptext = "Select an Image ...";
   List<String> promptText = [
     "apple",
-    "beach",
-    "belt",
-    "books",
-    "bottle",
-    "butterfly",
-    "car",
-    "chair",
-    "cheetah",
-    "chimpanzee"
+    "cat",
+    "bulb",
+    "cat",
+    "chimpanzee",
+    "charger",
   ];
-  List<bool> leftValidations = [true, true, true, false, false, false, true, true, false, true];
-  List<bool> rightValidations = [false, false, false, true, true, true, false, false, true, false];
+  List<bool> leftValidations = [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+  ];
+  List<bool> rightValidations = [
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+  ];
   List<String> leftImages = [
     'assets/images/apple.jpg',
-    'assets/images/beach.jpg',
-    'assets/images/belt.jpg',
-    'assets/images/bike.jpg',
+    'assets/images/cat.jpg',
     'assets/images/bulb.jpg',
-    'assets/images/bus.jpg',
-    'assets/images/car.jpg',
-    'assets/images/chair.jpg',
-    'assets/images/charger.jpg',
-    'assets/images/chimpangee.jpg',
+    'assets/images/butterfly.jpg',
+    'assets/images/cheetah.jpeg',
+    'assets/images/colorpencils.jpg',
   ];
   List<String> rightImages = [
     'assets/images/bag.jpg',
     'assets/images/banana.jpg',
-    'assets/images/bed.jpg',
-    'assets/images/books.jpg',
-    'assets/images/bottle.jpg',
-    'assets/images/butterfly.jpg',
-    'assets/images/calendar.jpg',
+    'assets/images/bus.jpg',
     'assets/images/cat.jpg',
-    'assets/images/cheetah.jpg',
-    'assets/images/colorpencils.jpg',
+    'assets/images/chimpanzee.jpeg',
+    'assets/images/charger.jpeg',
   ];
 
   int currentPairIndex = 0; // Track the current question index
@@ -124,7 +126,8 @@ class _ListeningPictureState extends State<ListeningPicture> {
     _feedbackTimer?.cancel(); // Cancel any existing timer
     setState(() {
       poptext = 'Wrong!';
-      totalCorrectAnswers = (totalCorrectAnswers > 0) ? totalCorrectAnswers - 1 : 0;
+      totalCorrectAnswers =
+          (totalCorrectAnswers > 0) ? totalCorrectAnswers - 1 : 0;
     });
   }
 
@@ -166,7 +169,8 @@ class _ListeningPictureState extends State<ListeningPicture> {
                     const SizedBox(height: 10),
                     Text(
                       poptext,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -224,7 +228,8 @@ class _ListeningPictureState extends State<ListeningPicture> {
                       onPressed: _skipQuestion,
                       child: const Text(
                         'Skip',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
@@ -235,7 +240,8 @@ class _ListeningPictureState extends State<ListeningPicture> {
                       onPressed: _stopExercise,
                       child: const Text(
                         'Stop Exercise',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,

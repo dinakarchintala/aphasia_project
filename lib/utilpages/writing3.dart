@@ -68,13 +68,13 @@ class _WritingalphabetState extends State<Writingalphabet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: Text(
           'Write the spoken letter',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

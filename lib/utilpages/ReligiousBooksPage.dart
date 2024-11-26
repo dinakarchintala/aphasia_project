@@ -39,23 +39,24 @@ class ReligiousBooksPage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text('Religious Books'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.white,
       ),
       body: ListView.builder(
         itemCount: books.length,
         itemBuilder: (context, index) {
           final book = books[index];
           return Container(
-            height: screenHeight * 0.1, // 10% of the screen height
+            height: screenHeight * 0.2, // 10% of the screen height
             margin: EdgeInsets.symmetric(
-              vertical: screenHeight * 0.01, // 1% vertical margin
-              horizontal: screenWidth * 0.05, // 5% horizontal margin
+              vertical: screenHeight * 0.06, // 1% vertical margin
+              horizontal: screenWidth * 0.3, // 5% horizontal margin
             ),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.white,
               ),
               onPressed: () async {
                 final pdfPath = await PdfHelper.preloadPdf(book['asset']!);
@@ -96,9 +97,10 @@ class PdfViewerPage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.white,
       ),
       body: Center(
         child: Container(

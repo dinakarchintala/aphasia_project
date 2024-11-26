@@ -66,7 +66,7 @@ class _ReadAndMatchState extends State<ReadAndMatch> {
   void skipfn() {
     setState(() {
       if (!(currentPairIndex + 1 == leftvalidations.length)) {
-        poptext = "Select an Image ...";
+        poptext = "Match the lower case with upper case...";
         currentPairIndex = currentPairIndex + 1;
       } else {
         Navigator.pushNamed(context, '/completion');
@@ -84,9 +84,9 @@ class _ReadAndMatchState extends State<ReadAndMatch> {
       _feedbackTimer = Timer(const Duration(seconds: 2), () {
         // 2-second delay
         setState(() {
-          poptext = 'Select an image';
+          poptext = "Match the lower case with upper case...";
           if (!(currentPairIndex + 1 == leftvalidations.length)) {
-            poptext = "Select an Image ...";
+            poptext = "Match the lower case with upper case...";
             currentPairIndex = currentPairIndex + 1;
           } else {
             Navigator.pushNamed(context, '/completion');
@@ -99,13 +99,13 @@ class _ReadAndMatchState extends State<ReadAndMatch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: const Text(
           'Read and Match the upper case Letter',
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFBDFCC9),
+        backgroundColor: Colors.white,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

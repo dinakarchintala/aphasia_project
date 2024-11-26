@@ -2,6 +2,7 @@ import 'package:aphasia_bot/pages/helppage.dart';
 import 'package:aphasia_bot/pages/funspace.dart';
 import 'package:aphasia_bot/pages/callschedule.dart';
 import 'package:aphasia_bot/pages/home.dart';
+import 'package:aphasia_bot/utilpages/foodorder.dart';
 import 'package:aphasia_bot/utilpages/memoriesvideo.dart';
 import 'package:aphasia_bot/utilpages/meditation.dart';
 import 'package:flutter/material.dart';
@@ -133,16 +134,14 @@ class Homedesign extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              Callschedule()),
+                                          builder: (context) => Callschedule()),
                                     );
                                     break;
                                   case 4:
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              Memoriesvideo()),
+                                          builder: (context) => Foodorder()),
                                     );
                                     break;
                                   case 5:

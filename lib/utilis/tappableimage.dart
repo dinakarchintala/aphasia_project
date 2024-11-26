@@ -9,7 +9,8 @@ class TappableImageContainer extends StatefulWidget {
   final VoidCallback oninCorrectTap;
 
   const TappableImageContainer(
-      {super.key, required this.imagePath,
+      {super.key,
+      required this.imagePath,
       this.isCorrect = false,
       required this.onCorrectTap,
       required this.oninCorrectTap});
@@ -63,7 +64,7 @@ class _TappableImageContainerState extends State<TappableImageContainer> {
         ),
         child: Image.asset(
           widget.imagePath,
-          height: 500,
+          height: 300,
           width: 190,
         ),
       ),
