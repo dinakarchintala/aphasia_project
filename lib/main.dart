@@ -1,7 +1,11 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aphasia_bot/widget_tree.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:aphasia_bot/services/translation_service.dart'; // Import your TranslationService class
+import 'package:aphasia_bot/services/translation_service.dart';
+import 'package:aphasia_bot/services/auth_service.dart';
 import 'package:aphasia_bot/pages/helppage.dart';
 import 'package:aphasia_bot/pages/home.dart';
 import 'package:aphasia_bot/pages/funspace.dart';
@@ -12,6 +16,7 @@ import 'package:aphasia_bot/pages/reading.dart';
 import 'package:aphasia_bot/pages/speaking.dart';
 import 'package:aphasia_bot/pages/welcome.dart';
 import 'package:aphasia_bot/pages/writing.dart';
+import 'package:aphasia_bot/pages/findinpicture.dart';
 import 'package:aphasia_bot/utilpages/Familyquiz.dart';
 import 'package:aphasia_bot/utilpages/ReligiousBooksPage.dart';
 import 'package:aphasia_bot/utilpages/completion.dart';
@@ -31,12 +36,14 @@ import 'package:aphasia_bot/utilpages/writing3.dart';
 import 'package:aphasia_bot/utilpages/foodorder.dart';
 import 'package:aphasia_bot/utilpages/artspage.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TranslationService()),
+        Provider<Auth>(create: (_) => Auth()),
       ],
       child: MyApp(),
     ),
@@ -48,9 +55,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<Auth>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+      home: StreamBuilder(
+        stream: auth.authStateChanges,
+        builder: (context, snapshot) {
+          // Check if user is logged in
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasData) {
+            // User is logged in
+            return WelcomePage(); // Replace with your main logged-in screen
+          } else {
+            // User is logged out
+            return WelcomePage(); // Replace with your login/signup page
+          }
+        },
+      ),
       routes: {
         '/Welcome': (context) => WelcomePage(),
         '/Home': (context) => TherapyHomePage(),
@@ -68,6 +90,7 @@ class MyApp extends StatelessWidget {
         '/Writing': (context) => Writing(),
         '/Speaking': (context) => Speaking(),
         '/Reading': (context) => Reading(),
+        '/findpicture': (context) => FindInPicture(),
         '/Listeningpicture': (context) => ListeningPicture(),
         '/Listeningword': (context) => Listeningword(),
         '/Listeningalphabet': (context) => ListeningAlphabet(),

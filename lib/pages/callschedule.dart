@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:aphasia_bot/services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Callschedule extends StatefulWidget {
   const Callschedule({super.key});
@@ -9,9 +14,56 @@ class Callschedule extends StatefulWidget {
 }
 
 class _CallscheduleState extends State<Callschedule> {
-  List<Map<String, dynamic>> callSchedules = [];
+  late CollectionReference callSchedulesCollection;
 
-  void _createSchedule(BuildContext context) {
+  @override
+  void initState() {
+    super.initState();
+    final authService = Provider.of<Auth>(context, listen: false);
+    callSchedulesCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(authService.currentUser?.uid)
+        .collection('callSchedules');
+  }
+
+  Future<void> _callingUsingTwilio(String number) async {
+    const accountSid = 'AC333f057fec403d73ff0438d6c6e0f7da';
+    const authToken = 'd55b29422b71f535214b7be434f709a2';
+    const fromPhone = '+17755429270';
+    final uri = Uri.parse(
+        'https://api.twilio.com/2010-04-01/Accounts/$accountSid/Calls.json');
+    final formattedNumber = number.startsWith('+91') ? number : '+91$number';
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization':
+            'Basic ${base64Encode(utf8.encode('$accountSid:$authToken'))}',
+      },
+      body: {
+        'From': fromPhone,
+        'To': formattedNumber,
+        'Url': 'http://demo.twilio.com/docs/voice.xml',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Call initiated successfully!')),
+      );
+    } else {
+      print("Error: ${response.statusCode} ${response.body}"); // Add this
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to initiate call: ${response.body}')),
+      );
+    }
+  }
+
+  Future<void> _deleteSchedule(String scheduleId) async {
+    await callSchedulesCollection.doc(scheduleId).delete();
+  }
+
+  Future<void> _createSchedule(BuildContext context) async {
     final _nameController = TextEditingController();
     final _reasonController = TextEditingController();
     final _phoneController = TextEditingController();
@@ -22,24 +74,24 @@ class _CallscheduleState extends State<Callschedule> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text("Create Schedule"),
+        title: const Text("Create Schedule"),
         content: SingleChildScrollView(
           child: Column(
             children: [
               TextField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: "Name"),
+                decoration: const InputDecoration(labelText: "Name"),
               ),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                decoration: InputDecoration(labelText: "Phone Number"),
+                decoration: const InputDecoration(labelText: "Phone Number"),
               ),
               TextField(
                 controller: _reasonController,
-                decoration: InputDecoration(labelText: "Reason"),
+                decoration: const InputDecoration(labelText: "Reason"),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Text(
@@ -47,9 +99,9 @@ class _CallscheduleState extends State<Callschedule> {
                         ? "Select Date"
                         : DateFormat('EEEE, MMM d').format(selectedDate!),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
-                    child: Text("Choose Date"),
+                    child: const Text("Choose Date"),
                     onPressed: () async {
                       final pickedDate = await showDatePicker(
                         context: context,
@@ -73,9 +125,9 @@ class _CallscheduleState extends State<Callschedule> {
                         ? "Select Time"
                         : "${selectedTime!.hour}:${selectedTime!.minute.toString().padLeft(2, '0')}",
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
-                    child: Text("Choose Time"),
+                    child: const Text("Choose Time"),
                     onPressed: () async {
                       final pickedTime = await showTimePicker(
                         context: context,
@@ -95,34 +147,33 @@ class _CallscheduleState extends State<Callschedule> {
         ),
         actions: [
           TextButton(
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
             onPressed: () => Navigator.of(ctx).pop(),
           ),
           TextButton(
-            child: Text("Add"),
-            onPressed: () {
+            child: const Text("Add"),
+            onPressed: () async {
               if (_nameController.text.isNotEmpty &&
                   _reasonController.text.isNotEmpty &&
                   _phoneController.text.isNotEmpty &&
                   selectedDate != null &&
                   selectedTime != null) {
+                final datetime = DateTime(
+                  selectedDate!.year,
+                  selectedDate!.month,
+                  selectedDate!.day,
+                  selectedTime!.hour,
+                  selectedTime!.minute,
+                );
                 final schedule = {
                   "name": _nameController.text,
                   "reason": _reasonController.text,
                   "phone": _phoneController.text,
-                  "datetime": DateTime(
-                    selectedDate!.year,
-                    selectedDate!.month,
-                    selectedDate!.day,
-                    selectedTime!.hour,
-                    selectedTime!.minute,
-                  ),
+                  "datetime": datetime.toIso8601String(),
                 };
-                setState(() {
-                  callSchedules.add(schedule);
-                  callSchedules.sort((a, b) =>
-                      a['datetime'].compareTo(b['datetime'])); // Sort by date
-                });
+
+                await callSchedulesCollection.add(schedule);
+
                 Navigator.of(ctx).pop();
               }
             },
@@ -132,66 +183,91 @@ class _CallscheduleState extends State<Callschedule> {
     );
   }
 
-  void _deleteSchedule(int index) {
-    setState(() {
-      callSchedules.removeAt(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Call Scheduler"),
+        title: const Text("Call Scheduler"),
         backgroundColor: Colors.white,
       ),
-      backgroundColor: Color(0xFFE3F2FD),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Welcome to Call Scheduling",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: callSchedules.length,
-              itemBuilder: (ctx, index) {
-                final schedule = callSchedules[index];
-                final dateStr =
-                    DateFormat('EEEE, MMM d').format(schedule['datetime']);
-                final timeStr =
-                    DateFormat('h:mm a').format(schedule['datetime']);
+      backgroundColor: const Color(0xFFE3F2FD),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: callSchedulesCollection
+            .orderBy('datetime', descending: false)
+            .snapshots(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                return Card(
-                  margin: EdgeInsets.all(8),
-                  child: ListTile(
-                    title: Text("${schedule['name']}"),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Reason: ${schedule['reason']}"),
-                        Text("Phone: ${schedule['phone']}"),
-                        Text("Time: $timeStr"),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.call, color: Colors.green),
-                      onPressed: () {
-                        // Logic for initiating a call can go here
-                      },
+          final docs = snapshot.data?.docs ?? [];
+          final groupedSchedules = <String, List<DocumentSnapshot>>{};
+
+          for (final doc in docs) {
+            final datetime = DateTime.parse(doc['datetime']);
+            final dateKey = DateFormat('EEEE, MMM d').format(datetime);
+            groupedSchedules.putIfAbsent(dateKey, () => []).add(doc);
+          }
+
+          return ListView(
+            children: groupedSchedules.entries.map((entry) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      entry.key,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                  ...entry.value.map((doc) {
+                    final schedule = doc.data() as Map<String, dynamic>;
+                    final scheduleId = doc.id;
+                    final datetime = DateTime.parse(schedule['datetime']);
+                    final timeStr = DateFormat('h:mm a').format(datetime);
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      child: ListTile(
+                        title: Text("${schedule['name']}"),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Reason: ${schedule['reason']}"),
+                            Text("Phone: ${schedule['phone']}"),
+                            Text("Time: $timeStr"),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.call, color: Colors.green),
+                              onPressed: () =>
+                                  _callingUsingTwilio(schedule['phone']),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteSchedule(scheduleId),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ],
+              );
+            }).toList(),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () => _createSchedule(context),
       ),
     );
