@@ -1,4 +1,4 @@
-package com.example.aphasia_bot
+package com.aphasiatherapy.bot;
 
 import io.flutter.embedding.android.FlutterActivity
 

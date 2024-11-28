@@ -15,23 +15,24 @@ class Funspace extends StatelessWidget {
 
     // List of subsections
     List<String> titles = [
-      "Memories",
-      "Fun Quiz",
+      // "Memories",
       // "Storytelling Session",
       "Arts",
       "Reading Religious Books",
+      "Fun Quiz",
     ];
 
     List<String> images = [
-      'assets/images/memories.png',
-      'assets/images/family_quiz.png',
+      // 'assets/images/memories.png',
+
       // 'assets/funspace/storytellingsession.jpeg',
       'assets/funspace/art.jpeg',
       'assets/funspace/religousbooks.png',
+      'assets/images/family_quiz.png',
     ];
 
     List<Widget> pages = [
-      Memoriesvideo(), // Implement each corresponding page
+      // Memoriesvideo(), // Implement each corresponding page
       Familyquiz(),
       // StorytellingSessionPage(),
       Artspage(),
@@ -138,16 +139,15 @@ class Funspace extends StatelessWidget {
   }
 }
 
-// Placeholder pages for each section
-class StorytellingSessionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Storytelling Session'),
-        backgroundColor: Colors.white,
-      ),
-      body: const Center(child: Text('Welcome to Storytelling Session!')),
-    );
-  }
-}
+// class StorytellingSessionPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Storytelling Session'),
+//         backgroundColor: Colors.white,
+//       ),
+//       body: const Center(child: Text('Welcome to Storytelling Session!')),
+//     );
+//   }
+// }

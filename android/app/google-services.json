@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "618859474662",
+    "project_id": "aphasia-therapy-8de40",
+    "storage_bucket": "aphasia-therapy-8de40.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618859474662:android:0ed414a86c205daeaa5527",
+        "android_client_info": {
+          "package_name": "com.aphasiatherapy.bot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiRLODHgb7S0bdRIbVozTXEKglZUFSqwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
