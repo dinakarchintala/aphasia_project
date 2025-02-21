@@ -67,46 +67,46 @@ class _WelcomePageState extends State<WelcomePage>
         leading: Builder(
           builder: (context) => authService.isSignedIn
               ? IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                )
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          )
               : const SizedBox.shrink(), // Placeholder when not signed in
         ),
       ),
       drawer: authService.isSignedIn
           ? Drawer(
-              child: ListView(
-                children: [
-                  UserAccountsDrawerHeader(
-                    accountName: Text(
-                      authService.currentUser?.displayName ?? 'Name',
-                    ),
-                    accountEmail: Text(
-                      authService.currentUser?.email ?? '',
-                    ),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundImage: authService.currentUser?.photoURL != null
-                          ? NetworkImage(authService.currentUser!.photoURL!)
-                          : null,
-                      child: authService.currentUser?.photoURL == null
-                          ? const Icon(Icons.person)
-                          : null,
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: const Text('Logout'),
-                    onTap: () async {
-                      await authService.signOut();
-                      setState(() {}); // Force a rebuild after logout
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(
+                authService.currentUser?.displayName ?? 'Name',
               ),
-            )
+              accountEmail: Text(
+                authService.currentUser?.email ?? '',
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: authService.currentUser?.photoURL != null
+                    ? NetworkImage(authService.currentUser!.photoURL!)
+                    : null,
+                child: authService.currentUser?.photoURL == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () async {
+                await authService.signOut();
+                setState(() {}); // Force a rebuild after logout
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      )
           : null, // Show drawer only when signed in
       body: Stack(
         children: [
@@ -206,9 +206,9 @@ class _WelcomePageState extends State<WelcomePage>
                     MaterialPageRoute(builder: (context) => Homedesign()),
                   );
                 } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => LoginPage(),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 }
               },

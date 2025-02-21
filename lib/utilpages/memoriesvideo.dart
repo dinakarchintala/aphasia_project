@@ -1,111 +1,101 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Memories Video',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Memoriesvideo(),
+    );
+  }
+}
 
 class Memoriesvideo extends StatelessWidget {
   const Memoriesvideo({super.key});
 
-  Future<void> _addSection(BuildContext context) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
-
-    final TextEditingController sectionController = TextEditingController();
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Create New Section"),
-        content: TextField(
-          controller: sectionController,
-          decoration: const InputDecoration(hintText: "Section Name"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final sectionName = sectionController.text.trim();
-              if (sectionName.isNotEmpty) {
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(userId)
-                    .collection('sections')
-                    .add({'title': sectionName});
-              }
-              Navigator.of(context).pop();
-            },
-            child: const Text("Add"),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) {
-      return const Center(child: Text("Please log in."));
-    }
+    List<Map<String, dynamic>> sections = [
+      {
+        "title": "Family",
+        "videos": [
+          {
+            "title": "Family Picnic",
+            "url": "https://www.youtube.com/watch?v=yRdsbL4rgcM"
+          },
+          {
+            "title": "Family Reunion",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+          },
+        ],
+      },
+      {
+        "title": "Home",
+        "videos": [
+          {
+            "title": "Home Sweet Home",
+            "url": "https://www.youtube.com/watch?v=e4oTTuLISaE"
+          },
+          {
+            "title": "Celebrations at Home",
+            "url": "https://www.youtube.com/watch?v=L_jWHffIx5E"
+          },
+        ],
+      },
+      {
+        "title": "Religious Places",
+        "videos": [
+          {
+            "title": "Visit to Temple",
+            "url": "https://www.youtube.com/watch?v=C0DPdy98e4c"
+          },
+          {
+            "title": "Pilgrimage Memories",
+            "url": "https://www.youtube.com/watch?v=3JWTaaS7LdU"
+          },
+        ],
+      },
+    ];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Memories"),
         backgroundColor: Colors.white,
       ),
-      backgroundColor: const Color(0xFFE3F2FD),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addSection(context),
-        child: const Icon(Icons.add),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .collection('sections')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final sections = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: sections.length,
-            itemBuilder: (context, index) {
-              final section = sections[index];
-              return Card(
-                color: const Color(0xFFFFFFFF),
-                margin: const EdgeInsets.all(12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: ListTile(
-                  title: Text(
-                    section['title'],
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+      backgroundColor: Color(0xFFE3F2FD),
+      body: ListView.builder(
+        itemCount: sections.length,
+        itemBuilder: (context, index) {
+          return Card(
+            color: Color(0xFFFFFFFF),
+            margin: const EdgeInsets.all(12),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              title: Text(
+                sections[index]['title'],
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VideoCategoryPage(
+                      title: sections[index]['title'],
+                      videos: sections[index]['videos'],
+                    ),
                   ),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VideoCategoryPage(
-                          sectionId: section.id,
-                          title: section['title'],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
@@ -115,194 +105,50 @@ class Memoriesvideo extends StatelessWidget {
 
 class VideoCategoryPage extends StatelessWidget {
   final String title;
-  final String sectionId;
+  final List<Map<String, String>> videos;
 
   const VideoCategoryPage({
     super.key,
     required this.title,
-    required this.sectionId,
+    required this.videos,
   });
-
-  Future<void> _addVideo(BuildContext context) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
-
-    final TextEditingController videoTitleController = TextEditingController();
-    final TextEditingController youtubeLinkController = TextEditingController();
-    final picker = ImagePicker();
-    File? videoFile;
-    String videoType = "YouTube Link"; // Default option
-
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text("Add New Video"),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: videoTitleController,
-                    decoration: const InputDecoration(hintText: "Video Title"),
-                  ),
-                  const SizedBox(height: 10),
-                  DropdownButton<String>(
-                    value: videoType,
-                    items: [
-                      "YouTube Link",
-                      "Upload Video",
-                    ].map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        videoType = value!;
-                      });
-                    },
-                  ),
-                  if (videoType == "YouTube Link") ...[
-                    TextField(
-                      controller: youtubeLinkController,
-                      decoration:
-                          const InputDecoration(hintText: "YouTube Link"),
-                    ),
-                  ] else ...[
-                    ElevatedButton(
-                      onPressed: () async {
-                        final pickedFile =
-                            await picker.pickVideo(source: ImageSource.gallery);
-                        if (pickedFile != null) {
-                          videoFile = File(pickedFile.path);
-                        }
-                      },
-                      child: const Text("Pick Video"),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Cancel"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final videoTitle = videoTitleController.text.trim();
-                  if (videoTitle.isNotEmpty) {
-                    if (videoType == "YouTube Link") {
-                      final youtubeLink = youtubeLinkController.text.trim();
-                      if (youtubeLink.isNotEmpty) {
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(userId)
-                            .collection('sections')
-                            .doc(sectionId)
-                            .collection('videos')
-                            .add({'title': videoTitle, 'url': youtubeLink});
-                      }
-                    } else if (videoFile != null) {
-                      final storageRef = FirebaseStorage.instance.ref().child(
-                          'users/$userId/videos/${videoFile!.path.split('/').last}');
-                      final uploadTask = await storageRef.putFile(videoFile!);
-                      final videoUrl = await uploadTask.ref.getDownloadURL();
-                      await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(userId)
-                          .collection('sections')
-                          .doc(sectionId)
-                          .collection('videos')
-                          .add({'title': videoTitle, 'url': videoUrl});
-                    }
-                  }
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Add"),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) {
-      return const Center(child: Text("Please log in."));
-    }
-
     return Scaffold(
+      backgroundColor: Color(0xFFE3F2FD),
       appBar: AppBar(
         title: Text(title),
         backgroundColor: Colors.white,
       ),
-      backgroundColor: const Color(0xFFE3F2FD),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addVideo(context),
-        child: const Icon(Icons.add),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .collection('sections')
-            .doc(sectionId)
-            .collection('videos')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final videos = snapshot.data!.docs;
-          return ListView.builder(
-            itemCount: videos.length,
-            itemBuilder: (context, index) {
-              final video = videos[index];
-              return Card(
-                margin: const EdgeInsets.all(12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: ListTile(
-                  leading: const Icon(Icons.play_circle_fill,
-                      color: Colors.purple, size: 36),
-                  title: Text(
-                    video['title'],
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    final videoUrl = video['url'];
-                    if (videoUrl.startsWith("https://www.youtube.com")) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              FullscreenVideoPlayerDialog(videoUrl: videoUrl),
-                        ),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UploadedVideoPlayer(videoUrl: videoUrl),
-                        ),
-                      );
-                    }
+      body: ListView.builder(
+        itemCount: videos.length,
+        itemBuilder: (context, index) {
+          final video = videos[index];
+          return Card(
+            margin: const EdgeInsets.all(12),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: ListTile(
+              leading: const Icon(Icons.play_circle_fill,
+                  color: Colors.purple, size: 36),
+              title: Text(
+                video['title']!,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              onTap: () {
+                // Directly play video in fullscreen without navigating
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return FullscreenVideoPlayerDialog(
+                      videoUrl: video['url']!,
+                    );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
@@ -317,29 +163,68 @@ class FullscreenVideoPlayerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("YouTube Player")),
-      body: Center(
-        child: Text(
-            "YouTube Player: $videoUrl"), // Replace with YouTube Player Widget
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Stack(
+        children: [
+          YoutubePlayerWidget(videoUrl: videoUrl),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the fullscreen dialog
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class UploadedVideoPlayer extends StatelessWidget {
+class YoutubePlayerWidget extends StatefulWidget {
   final String videoUrl;
 
-  const UploadedVideoPlayer({super.key, required this.videoUrl});
+  const YoutubePlayerWidget({super.key, required this.videoUrl});
+
+  @override
+  State<YoutubePlayerWidget> createState() => _YoutubePlayerWidgetState();
+}
+
+class _YoutubePlayerWidgetState extends State<YoutubePlayerWidget> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
+    _controller = YoutubePlayerController(
+      initialVideoId: videoId!,
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        controlsVisibleAtStart: true,
+        enableCaption: true,
+        hideControls: true, // Show controls for fullscreen video
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Uploaded Video")),
-      body: Center(
-        child: Text(
-            "Uploaded Video: $videoUrl"), // Replace with video player widget
-      ),
+    return YoutubePlayer(
+      controller: _controller,
+      showVideoProgressIndicator: true,
+      onReady: () {
+        // Optional: Handle when player is ready
+      },
     );
   }
 }

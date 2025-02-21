@@ -1,5 +1,5 @@
-import 'package:aphasia_bot/pages/findinpicture.dart';
-import 'package:aphasia_bot/pages/listening.dart';
+import 'package:aphasia_bot/pages/findinpicture.dart' as findPicture;
+import 'package:aphasia_bot/pages/listening.dart' as listening;
 import 'package:aphasia_bot/pages/reading.dart';
 import 'package:aphasia_bot/pages/speaking.dart';
 import 'package:aphasia_bot/pages/writing.dart';
@@ -268,13 +268,13 @@ class TherapySection extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FindInPicture()),
+                            builder: (context) =>  const findPicture.FindInPicture()),
                       );
                       break;
                     case 1:
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Listening()),
+                        MaterialPageRoute(builder: (context) => const listening.Listening(),),
                       );
                       break;
                     case 2:

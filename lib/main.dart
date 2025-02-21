@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aphasia_bot/services/translation_service.dart';
 import 'package:aphasia_bot/services/auth_service.dart';
+import 'package:aphasia_bot/datasets/findpicturesw1.dart'; // Import your week datasets
+import 'package:aphasia_bot/datasets/findpicturesw2.dart';
+import 'package:aphasia_bot/datasets/findpicturesw3.dart';
 import 'package:aphasia_bot/pages/helppage.dart';
 import 'package:aphasia_bot/pages/home.dart';
 import 'package:aphasia_bot/pages/funspace.dart';
@@ -74,6 +77,9 @@ class MyApp extends StatelessWidget {
         },
       ),
       routes: {
+        '/FindInPictureWeek1':(context) =>FindInPictureWeek1(),
+        '/FindInPictureWeek2':(context) =>FindInPictureWeek2(),
+        '/FindInPictureWeek3':(context) =>FindInPictureWeek3(),
         '/Welcome': (context) => WelcomePage(),
         '/Home': (context) => TherapyHomePage(),
         '/Helppage': (context) => Helppage(),
